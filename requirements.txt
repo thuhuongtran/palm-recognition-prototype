@@ -1,0 +1,16 @@
+certifi==2024.12.14
+charset-normalizer==3.4.1
+idna==3.10
+kagglehub==0.3.6
+packaging==24.2
+requests==2.32.3
+tqdm==4.67.1
+urllib3==2.3.0
+
+opencv-python~=4.11.0.86
+numpy~=2.0.2
+tensorflow~=2.18.0
+matplotlib~=3.10.0
+tifffile~=2025.1.10
+albumentations~=2.0.0
+torch~=2.5.1

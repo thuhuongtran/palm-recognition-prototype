@@ -1,0 +1,96 @@
+###### Explore Data ########
+Number of TIFF files in session1: 6000
+Number of TIFF files in session2: 6000
+
+No missing file IDs detected in Session1.
+
+No missing file IDs detected in Session2.
+
+No corrupted files detected in either session.
+
+Session1 : Session2 Ratio = 1.00
+No severe imbalance between sessions based on file counts.
+
+--- SESSION 1 SAMPLE ---
+
+Sample File Info:
+  - Name        : 00001.tiff
+  - Shape       : (600, 800, 3)
+  - Dtype       : uint8
+  - Value Range : [0, 149]
+
+--- SESSION 2 SAMPLE ---
+
+Sample File Info:
+  - Name        : 00001.tiff
+  - Shape       : (600, 800, 3)
+  - Dtype       : uint8
+  - Value Range : [0, 190]
+
+
+######## Data Cleaning ########
+Number of TIFF files in session1: 6000
+Number of TIFF files in session2: 6000
+
+No missing file IDs detected in Session1.
+
+No missing file IDs detected in Session2.
+
+No corrupted files detected in either session.
+
+Session1 : Session2 Ratio = 1.00
+No severe imbalance between sessions based on file counts.
+
+--- SESSION 1 SAMPLE ---
+
+Sample File Info:
+  - Name        : 00001.tiff
+  - Shape       : (600, 800, 3)
+  - Dtype       : uint8
+  - Value Range : [0, 149]
+
+--- SESSION 2 SAMPLE ---
+
+Sample File Info:
+  - Name        : 00001.tiff
+  - Shape       : (600, 800, 3)
+  - Dtype       : uint8
+  - Value Range : [0, 190]
+
+--- Cleaning directory: ../dataset/archive/session1 ---
+
+[+] No corrupted files found in ../dataset/archive/session1.
+
+No metadata provided for ../dataset/archive/session1; skipping consistency check.
+
+[+] No duplicate images found.
+
+--- Finished cleaning directory: ../dataset/archive/session1 ---
+
+
+--- Cleaning directory: ../dataset/archive/session2 ---
+
+[+] No corrupted files found in ../dataset/archive/session2.
+
+No metadata provided for ../dataset/archive/session2; skipping consistency check.
+
+[+] No duplicate images found.
+
+--- Finished cleaning directory: ../dataset/archive/session2 ---
+
+
+################### augmentation #######################3
+create 12k images aumentations
+############## split data ################3
+
+Session 'session1':
+  Total files: 6000
+  Train split: 4800 -> ../dataset/split_data/train/session1
+  Test split : 1200 -> ../dataset/split_data/test/session1
+
+Session 'session2':
+  Total files: 6000
+  Train split: 4800 -> ../dataset/split_data/train/session2
+  Test split : 1200 -> ../dataset/split_data/test/session2
+
+Dataset splitting completed!
