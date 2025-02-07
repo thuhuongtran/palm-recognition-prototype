@@ -101,13 +101,27 @@ This contrastive objective forces the model to learn features that are invariant
 
 ## Model Architecture
 
-The feature extraction model is based on a **ResNet-18** Convolutional Neural Network (CNN) architecture.  The **encoder** part of the model utilizes a **ResNet-18 backbone**, initialized with weights **pre-trained on ImageNet**.  The original classification head of the pre-trained ResNet-18 was removed, and a **2-layer Multilayer Perceptron (MLP) projection head** was added on top of the encoder's output features.
-
-Specifically, the projection head consists of two linear layers with a ReLU activation function in between. This projection head further processes the features extracted by the ResNet-18 encoder before outputting the final **256-dimensional feature embeddings**.
-
-This architecture was chosen to leverage the powerful feature extraction capabilities of the ResNet-18 architecture, which is pre-trained on a large image dataset (ImageNet). The projection head is used to learn effective representations suitable for the contrastive learning task, mapping the ResNet-18 features into a lower-dimensional embedding space optimized for similarity comparisons. The model is trained to output **256-dimensional feature embeddings** for each input palmprint image.
-
-[![Palmprint Recognition Model Architecture Diagram](output/model/7.%20palmprint_encoder.onnx.svg)](output/model/7.%20palmprint_encoder.onnx.svg)
+<table>
+  <tr>
+    <td>
+      <p align="center">
+Model Architecture: <br/><br/>
+        <a href="output/model/7.%20palmprint_encoder.onnx.svg">
+          <img src="output/model/7.%20palmprint_encoder.onnx.svg" height="500">
+        </a>
+</p>
+    </td>
+    <td>
+      <p>
+The feature extraction model is based on a <strong>ResNet-18</strong> Convolutional Neural Network (CNN) architecture.  The <strong>encoder</strong> part of the model utilizes a <strong>ResNet-18 backbone</strong>, initialized with weights <strong>pre-trained on ImageNet</strong>.  The original classification head of the pre-trained ResNet-18 was removed, and a <strong>2-layer Multilayer Perceptron (MLP) projection head</strong> was added on top of the encoder's output features.
+        <br><br>
+Specifically, the projection head consists of two linear layers with a ReLU activation function in between. This projection head further processes the features extracted by the ResNet-18 encoder before outputting the final <strong>256-dimensional feature embeddings</strong>.
+        <br><br>
+This architecture was chosen to leverage the powerful feature extraction capabilities of the ResNet-18 architecture, which is pre-trained on a large image dataset (ImageNet). The projection head is used to learn effective representations suitable for the contrastive learning task, mapping the ResNet-18 features into a lower-dimensional embedding space optimized for similarity comparisons. The model is trained to output <strong>256-dimensional feature embeddings</strong> for each input palmprint image.
+      </p>
+    </td>
+  </tr>
+</table>
 
 
 ## Training Process
