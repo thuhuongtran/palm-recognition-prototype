@@ -1,232 +1,177 @@
-# palm-recognition-prototype
-Develop a prototype system for palm-based authentication that can accurately identify individuals despite variations in hand pose and camera angle.
+# Palmprint Recognition for Authentication using Self-Supervised Learning
 
-**Project Title:** Robust Palm-Based Authentication System using Deep Learning
+## Project Goal and Approach
 
-**Project Goal:** Develop a prototype system for palm-based authentication that can accurately identify individuals despite variations in hand pose and camera angle.
 
-**Steps:**
+This project implements a palmprint recognition system for authentication purposes. Due to the lack of labeled data for training, a self-supervised learning approach was adopted to learn meaningful feature representations from a large dataset of unlabeled palmprint images. The system utilizes contrastive learning to train a deep neural network to extract discriminative features, enabling palmprint matching and similarity comparison.  Finally, a user-friendly web interface was built to demonstrate the system's functionality.
 
-1. **Data Preprocessing (1-2 days):**
+## Dataset Description
+For this project, a dataset of **12,000 unlabeled palmprint images** was used. The images are in **TIFF format** and were **obtained from the "Kaggle Palm Recognition Dataset for Authentication System"** dataset available on Kaggle ([https://www.kaggle.com/datasets/saqibshoaibdz/palm-dataset/data](https://www.kaggle.com/datasets/saqibshoaibdz/palm-dataset/data)).
 
-   1. **Load and Explore the Data**:
-      - Use libraries like OpenCV or Pillow to load `.tiff` images.
-      - Visualize images and inspect metadata for pose, angle, and subject ID.
-      - Check for missing, corrupted, or imbalanced data.
+This dataset is described as containing high-quality images designed for training and evaluating palm recognition models for biometric authentication.  While the original dataset includes categories for palm detection, palm vein patterns, and palm print matching, this project utilizes the **palmprint images suitable for palm print matching**. The dataset consists of images with **relatively high quality, designed for real-world biometric authentication applications.** The images are expected to exhibit variations inherent in biometric data collection, but are generally intended to be high-quality for effective model training. Each image in the dataset is also associated with metadata within the original Kaggle dataset, though this project focuses on the image data itself for self-supervised learning.
 
-   2. **Data Cleaning**:
-      - Validate all images to ensure they are readable.
-      - Cross-check metadata consistency with images.
-      - Remove duplicate images to avoid data leakage.
+*   **Number of images:** 12,000
+*   **Type of images:** Palmprint images
+*   **Labeled or Unlabeled:** Unlabeled data
+*   **Image format:** TIFF images
+*   **Source:**  [Palm Recognition Dataset for Authentication System from Kaggle](https://www.kaggle.com/datasets/saqibshoaibdz/palm-dataset/data)
+*   **Characteristics:** Images typically feature a dark background, which aids in segmenting the palm region from the surroundings. The dataset likely contains multiple images of palmprints from the same individual, reflecting a realistic biometric authentication scenario and hinting at potential for future identity-based analysis.While designed to be high quality, the dataset likely includes natural variations in palm appearance due to individual differences, minor pose variations, and subtle changes in skin texture.
 
-   3. **Data Augmentation**:
-      - Apply geometric transformations: rotation, flips, translations.
-      - Use photometric adjustments: brightness, contrast, and Gaussian noise.
-      - Add perspective transformations: shearing and warping.
-      - Random cropping, resizing, and blurring for variability.
+## Image Preprocessing
 
-   4. **Normalize Images**:
-      - Scale pixel values to [0, 1] or [-1, 1].
-      - Standardize images using dataset mean and standard deviation.
+Before feature extraction, palmprint images undergo a preprocessing pipeline to enhance relevant features and standardize the input for the model. The key stages are:
 
-   5. **Resize Images**:
-      - Resize all images to a uniform size (e.g., 224x224) to match CNN requirements.
-      - Maintain aspect ratio to avoid feature distortion.
+1.  **Grayscale Conversion:** The input color palmprint image (if any) is converted to grayscale to simplify processing and focus on texture and line patterns.
+2.  **Contrast Enhancement (CLAHE - Contrast Limited Adaptive Histogram Equalization):**  CLAHE is applied to improve the local contrast of the palmprint image, making the lines and ridges more prominent and easier to detect. This uses a clip limit of `2.0` and a tile grid size of `(5, 5)`.
+3.  **Noise Reduction (Median Blur):** Median Blur with a kernel size of `1` is used to reduce noise while preserving edges.  While a kernel size of `1` effectively means minimal blurring, this step is included for potential future noise reduction adjustments.
+4.  **Palm Segmentation (Thresholding and Contour Extraction):**  A thresholding technique (using a `threshold_value` of `80`) is applied to create a binary mask, separating the palm region (foreground) from the background.  Contours are then extracted to identify the palm's outline.
+5.  **Region of Interest (ROI) Extraction (Centroid-Based):**  The Region of Interest (ROI) is extracted by finding the centroid (center of mass) of the largest contour (assumed to be the palm). A fixed-size square ROI of `(276x276)` pixels, centered at this centroid, is then cropped from the contrast-enhanced and noise-reduced grayscale image.
+6.  **ROI Resizing:** The extracted ROI is resized to a standardized `(138x138)` pixel size to ensure consistent input dimensions for the feature extraction model.
+7.  **ROI Normalization:** Finally, the pixel values of the resized ROI are normalized to the range of `[0, 1]` by dividing by `255.0`. This step helps in stabilizing and accelerating the training of the deep learning model.
 
-   6. **Split the Dataset**:
-      - Divide data into training (70%), validation (15%), and testing (15%) sets.
-      - Use stratified sampling for balanced splits.
+### **Example Preprocessing Stages:**
 
-   7. **Convert Data to Tensors**:
-      - Transform images into PyTorch tensors.
-      - Use `DataLoader` for efficient batching and loading during training.
+Below are example images illustrating the key stages of the preprocessing pipeline applied to a sample palmprint image from the dataset, displayed in a horizontal flow:
 
-   8. **Label Encoding**:
-      - Encode class labels (subject IDs) into numeric values.
-      - Prepare pairs of images for verification tasks (1 for same subject, 0 for different).
+<table>
+  <tr>
+    <td align="center">
+      (1) Original Image:<br>
+      <img src="output/original_image.png" width="150"><br>
+    </td>
+    <td align="center"> → </td>  <!-- Arrow -->
+    <td align="center">
+      (2) Grayscale Conversion:<br>
+      <img src="output/Grayscale%20Image_screenshot_27.01.2025.png"><br>
+    </td>
+    <td align="center"> → </td>  <!-- Arrow -->
+    <td align="center">
+      (3) Contrast Enhanced (CLAHE):<br>
+      <img src="output/CLAHE%20Image_screenshot_27.01.2025.png"><br>
+    </td>
+    <td align="center"> → </td>  <!-- Arrow -->
+    <td align="center">
+      (4) Noise Reduction: <br>
+      <img src="output/Blur%20Image_screenshot_27.01.2025.png"><br>
+    </td>
+    <td align="center"> → </td>  <!-- Arrow -->
+    <td align="center">
+      (5) Contour Extraction: <br>
+      <img src="output/Contours_screenshot_27.01.2025.png"><br>
+    </td>
+    <td align="center"> → </td>  <!-- Arrow -->
+    <td align="center">
+      (6) (ROI) Extraction: <br>
+      <img src="output/ROI_screenshot_27.01.2025.png"><br>
+    </td>
+    <td align="center"> → </td>  <!-- Arrow -->
+    <td align="center">
+      (7) ROI Resizing: <br>
+      <img src="output/Resized%20ROI_screenshot_27.01.2025.png"><br>
+    </td>
+    <td align="center"> → </td>  <!-- Arrow -->
+    <td align="center">
+      (8) ROI Normalization: <br>
+      <img src="output/Normalized%20ROI_screenshot_27.01.2025.png"><br>
+    </td>
+    <td align="center"> → </td>  <!-- Arrow -->
+    <td align="center">
+      (9) Final Preprocess Result: <br>
+      <img src="output/Final%20Preprocess%20Image_screenshot_27.01.2025.png"><br>
+    </td>
+  </tr>
+</table>
 
-   9. **Verify Preprocessing**:
-      - Visualize preprocessed and augmented images to ensure correctness.
-      - Confirm variability in the dataset after augmentation.
 
-   10. **Balance the Dataset (Optional)**:
-       - Address class imbalance with oversampling, undersampling, or synthetic data generation like SMOTE. 
+---
+## Self-Supervised Learning Method Used
 
-2. **Model Selection and Training (2-3 days):**
-    * Choose a Convolutional Neural Network (CNN) architecture suitable for image classification. Start with a simpler architecture like ResNet18 or MobileNetV2 for quicker training and experimentation. You could then explore more complex architectures if time permits.
-    * Implement the model in PyTorch.
-    * Train the model using the training data and monitor performance on the validation set. Experiment with different optimizers, loss functions, and learning rates.
-    * Implement early stopping to prevent overfitting.
+This project employed a **contrastive learning** approach, specifically inspired by **SimCLR (Simple Contrastive Learning for Representations)**.  Since the dataset is unlabeled, self-supervised learning was crucial to learn meaningful feature representations.
 
-3. **Model Evaluation and Optimization (1-2 days):**
-    * Evaluate the trained model on the test set using metrics like accuracy, precision, recall, and F1-score.
-    * Analyze the model's performance on different views (frontal, rotated frontal, perspective, rotated perspective) to identify any weaknesses. This ties directly to the dataset's strength.
-    * Fine-tune the model and hyperparameters to improve performance. Consider techniques like transfer learning (using pre-trained weights) if starting from scratch proves challenging within the time constraint.
+The SimCLR-inspired method works by:
+1.  **Creating positive pairs:** For each palmprint image in a batch, two augmented versions are generated using various image transformations (see "Data Augmentation" section). These two augmented views of the same palmprint form a "positive pair."
+2.  **Creating negative pairs:** Augmented views from different original palmprint images within the same batch are treated as "negative pairs."
+3.  **Training objective:** The model is trained to learn feature representations (embeddings) such that:
+    *   Embeddings of positive pairs are pulled closer together in the feature space.
+    *   Embeddings of negative pairs are pushed further apart.
 
-4. **API Development (2 days):**
-    * Create a simple RESTful API using Flask that accepts an image as input and returns the predicted user ID (or a similarity score if doing one-to-one matching instead of classification).
-    * Dockerize the application for easy deployment.
+This contrastive objective forces the model to learn features that are invariant to the applied augmentations and discriminative between different palmprints, all without requiring explicit labels.
 
-5. **UI Development (1 day):**
-    * Build a simple UI using Streamlit to showcase the project.  The UI should allow users to upload an image and see the authentication result.
-    * Display some key metrics and visualizations from the model training and evaluation process (e.g., accuracy, loss curves, confusion matrix).  This demonstrates your understanding of model performance analysis.
+**Loss Function:** The training process utilizes the **NT-Xent (Normalized Temperature-scaled Cross Entropy) Loss** function to achieve this objective. This loss function, with a **temperature parameter of 0.07**, encourages similar embeddings for positive pairs and dissimilar embeddings for negative pairs in a normalized embedding space. By minimizing this loss, the model learns to extract robust and discriminative features from the unlabeled palmprint images.
 
-6. **Deployment (1 day):**
-    * Deploy the Streamlit app to a free platform like Streamlit Cloud, Hugging Face Spaces, or Render.
+## Model Architecture
 
-7. **Documentation and GitHub (1 day):**
-    * Create a clear and concise README file on GitHub explaining the project, its goals, the technology stack, and how to run the application. Include instructions on how to use the API and the UI.
-    * Document your code clearly with comments.
+The feature extraction model is based on a **ResNet-18** Convolutional Neural Network (CNN) architecture.  The **encoder** part of the model utilizes a **ResNet-18 backbone**, initialized with weights **pre-trained on ImageNet**.  The original classification head of the pre-trained ResNet-18 was removed, and a **2-layer Multilayer Perceptron (MLP) projection head** was added on top of the encoder's output features.
 
-**Key Technologies:** Python, PyTorch, OpenCV, Flask, Docker, Streamlit, PostgreSQL (optional - could be used to simulate storing user data), Git.
+Specifically, the projection head consists of two linear layers with a ReLU activation function in between. This projection head further processes the features extracted by the ResNet-18 encoder before outputting the final **256-dimensional feature embeddings**.
 
-**Deliverables:**
+This architecture was chosen to leverage the powerful feature extraction capabilities of the ResNet-18 architecture, which is pre-trained on a large image dataset (ImageNet). The projection head is used to learn effective representations suitable for the contrastive learning task, mapping the ResNet-18 features into a lower-dimensional embedding space optimized for similarity comparisons. The model is trained to output **256-dimensional feature embeddings** for each input palmprint image.
 
-* GitHub repository with the project code and documentation.
-* Deployed Streamlit app showcasing the working prototype.
-* Short presentation or video demonstrating the project and highlighting your contributions.
+[![Palmprint Recognition Model Architecture Diagram](output/model/7.%20palmprint_encoder.onnx.svg)](output/model/7.%20palmprint_encoder.onnx.svg)
+
+
+## Training Process
+
+The self-supervised model was trained using PyTorch. The training process involved:
+
+*   **Framework:** PyTorch
+*   **Optimizer:** Adam optimizer with a learning rate of `1e-4` (0.0001)
+*   **Loss Function:** NT-Xent (Normalized Temperature-scaled Cross Entropy) Loss with a temperature of `0.07`
+*   **Training Epochs:** 100 epochs
+*   **Batch Size:** 64
+*   **Data Augmentations:** During training, the following data augmentations were applied to generate positive pairs:
+    *   `RandomResizedCrop`
+    *   `RandomRotation` (small angles)
+    *   `ColorJitter` (grayscale - brightness and contrast adjustments)
+    *   `GaussianBlur`
+*   **Training Procedure:** The training loss was monitored, and the model weights were updated using backpropagation with the Adam optimizer to minimize the NT-Xent loss. The model learned to create embeddings where augmented views of the same palmprint are close together, and views of different palmprints are far apart in the embedding space.
+
+## UI Functionality
+
+*   **Framework used:** Streamlit
+*   **Key features:** Image upload, display of uploaded image, display of top matching palmprints from database, similarity scores, indication of match/no match.
+
+A simple and interactive web user interface was developed using **Streamlit** to demonstrate the palmprint recognition system. The UI provides the following functionalities:
+
+*   **Image Upload:** Users can upload a palmprint image file (JPG, JPEG, PNG, TIFF).
+*   **Uploaded Image Display:** The uploaded palmprint image is displayed on the UI.
+*   **Matching Results Display:**  Upon uploading an image, the system compares it against a database of 11996 images pre-extracted palmprint features.
+*   **Top Matching Palmprints:** The UI displays the top matches of 5 most similar palmprint images from the database, along with their cosine similarity scores.
+*   **Match Indication:** The UI indicates whether a "match" is found based on a predefined similarity threshold value of 80%.
+
+The UI allows users to easily test the palmprint recognition system by uploading their own palmprint images and observing the matching results in real-time.
+
+![palmprint-demo.gif](output/palmprint-demo.gif)
+
+_The demo showcases the palmprint recognition system's ability to identify palmprints from the same individual.  By using one of the original palmprint images (that was excluded from the training dataset), the model successfully located the other corresponding palmprint images in the database (from the same person) with similarity scores consistently around 90%._
+
+## How to Run the Code
+
+To run this project, navigate to the project directory, follow these steps:
+
+1.  **Install Libraries:** 
+    ```bash
+    pip install -r requirements.txt
+    ```
+2. **Run the Streamlit UI:**
+
+    ```bash
+    streamlit run app.py
+    ```
+
+3. **Access the UI:**  Open your web browser and go to the address provided by Streamlit (usually `http://localhost:8501`).
+
+## Key Libraries Used
+
+*   **PyTorch:** Deep learning framework for model building and training.
+*   **torchvision:** PyTorch's library for computer vision tasks, including pre-trained models and image transformations.
+*   **OpenCV (cv2):**  Image processing library for preprocessing steps.
+*   **NumPy:** Numerical computing library for array operations and data handling.
+*   **Streamlit:** Python framework for building interactive web UIs.
+*   **scikit-learn (sklearn):** Machine learning library, used for cosine similarity calculation.
+*   **PIL (Pillow):** Python Imaging Library for image handling (used via Streamlit).
 
 ---
 
-## **Project Title**  
-**Unsupervised Palm Feature Extraction and Verification Prototype**
-
----
-
-## **High-Level Idea**  
-1. **Learn a robust feature representation** (embedding) for palm images **without** labeled data, using either:
-   - A **self-supervised method** (e.g., SimCLR, BYOL, or MoCo)  
-   - A **deep autoencoder** (less ideal for true matching, but simpler to implement)  
-2. **Extract embeddings** for each palm image.  
-3. **Perform palm verification (1:1)** by comparing the **distance/similarity** between the embeddings of two images.  
-   - Although we can’t definitively label them “same person” or “different person” without ground truth, we can demonstrate a typical verification pipeline.  
-4. **Build a small demo** (e.g., Streamlit app) that:
-   - Lets you **upload two palm images**.  
-   - Shows how the system **computes** their embeddings and outputs a **similarity score** (or distance).  
-   - Provides a **threshold** to decide if they “match.”
-
-This approach is still **close to real-world** palm authentication, but uses a **self-supervised** or **unsupervised** technique to learn palm features from unlabeled images.
-
----
-
-## **Revised Project Goals**
-
-1. **Feature Learning (Unsupervised/Self-Supervised)**: Develop or adapt a CNN-based method to learn discriminative features from unlabeled palm images.  
-2. **Verification Pipeline**: Demonstrate how to compare two palm images and compute a match score.  
-3. **Prototype Deployment**: Provide a simple UI and RESTful API for demonstration purposes.
-
----
-
-## **Project Timeline (Approx. 5–7 Days)**
-
-### **Day 1: Data Handling & Cleaning**
-- **Goal**: Ensure data is ready for model input.
-- **Tasks**:
-  1. **Load & Inspect** the palm images (already done in “Load and Explore” step).
-  2. **Clean** the data (already done in “Data Cleaning” step).
-  3. **Set up** augmentation pipelines (already done in “Data Augmentation” step).
-  4. **Organize** final dataset structure:  
-     - Possibly create “train” and “test” splits (though unlabeled, we can still separate for later analysis).
-
-### **Day 2: Self-Supervised Feature Learning (Model Setup)**
-- **Goal**: Implement or adapt a self-supervised model to learn embeddings from unlabeled images.
-- **Tasks**:
-  1. **Choose a framework**:
-     - **Simple Option**: **Autoencoder** (easy to implement, though less ideal for matching accuracy).  
-     - **More Advanced**: **SimCLR**, **BYOL**, or **MoCo** (requires more complex code but often yields better embeddings).
-  2. **Implement** the model in **PyTorch** (or TensorFlow):
-     - For an **autoencoder**: define encoder-decoder architecture.  
-     - For a **contrastive** approach (e.g., SimCLR): define backbone (ResNet, MobileNet, etc.) and contrastive loss function.
-  3. **Incorporate Data Augmentation** from your pipeline during training (important in self-supervised learning).
-
-### **Day 3: Training & Embedding Extraction**
-- **Goal**: Train the self-supervised model and save a feature extractor.
-- **Tasks**:
-  1. **Train** the model on your unlabeled palm dataset:
-     - Keep an eye on **loss curves** and potential overfitting.  
-     - For a contrastive method, ensure enough augmentation variety.
-  2. **Extract Embeddings**:
-     - Once training is done, freeze the encoder.
-     - Generate embeddings for the images in a **test** or **hold-out** set.
-  3. **Evaluate Embeddings** (qualitatively):
-     - Optionally apply **dimensionality reduction** (e.g., t-SNE/UMAP) to visualize grouping/clustering of palm images.
-     - We can’t measure classification accuracy (no labels), but we can check if embeddings look consistent (e.g., multiple images of the same palm look close, if you happen to have some repeated images under different angles—if that info is known or can be guessed).
-
-### **Day 4: Verification (1:1) Mechanism**
-- **Goal**: Show a typical verification step using learned embeddings.
-- **Tasks**:
-  1. **Implement a function** that given two images:
-     - Loads each image.
-     - Passes them through the **frozen encoder** to get embeddings.
-     - Computes **similarity** (e.g., cosine similarity) or **distance** (e.g., Euclidean).  
-  2. **Threshold Tuning (Optional)**:
-     - In reality, you’d use labeled pairs of “same person” vs. “different person” to set a decision threshold. Without labels, you can pick a threshold that “feels” right based on typical distances or by looking at the distribution of distances on randomly chosen pairs.
-  3. **Demonstrate**:
-     - If the distance < threshold, declare “Match.” Otherwise, “No Match.”
-  4. **Analysis**:
-     - Possibly pick random image pairs and see how the distance behaves.  
-     - If you do have any repeated images (like same file appearing in the dataset multiple times), test them to see if the system yields a high similarity, indicating it can match them as identical.
-
-### **Day 5: API & UI Integration**
-- **Goal**: Provide a demonstration interface for your unsupervised approach.
-- **Tasks**:
-  1. **Flask (API)**:
-     - Create an endpoint `/verify` that accepts two images and returns:
-       - Embedding distance or similarity.
-       - A “match” or “no match” boolean, depending on the threshold.
-  2. **Streamlit (UI)**:
-     - Allow the user to **upload two images** via a simple web interface.
-     - On submission, the images are processed:
-       - Show the numeric distance or similarity score.
-       - Print whether it’s above/below the threshold (indicating “match” or “no match”).
-  3. **Dockerize** (optional but good practice) for easier deployment.
-
-### **Day 6: Testing & Deployment**
-- **Goal**: Ensure everything is functional and publicly accessible (if desired).
-- **Tasks**:
-  1. **Local Tests**:  
-     - Run through multiple pairs of images.
-     - Confirm the system responds quickly and consistently.
-  2. **Deployment** (e.g., Streamlit Cloud, Hugging Face Spaces):
-     - Deploy your **Streamlit** app so others can test it.  
-  3. **Troubleshoot** any performance or dependency issues.
-
-### **Day 7: Documentation & Wrap-Up**
-- **Goal**: Finalize the project artifacts.
-- **Tasks**:
-  1. **README** on GitHub:  
-     - Explain the approach (self-supervised or autoencoder).  
-     - Summarize installation, usage, and the UI usage.  
-  2. **Presentation** or short video demo:
-     - Show your app in action.  
-     - Mention the limitations (no labeled data, approximate threshold).  
-  3. **Future Work** (if time permits):
-     - Possibly incorporate a small labeled subset (if you can gather it manually) to do a real accuracy test or threshold tuning.
-
----
-
-## **Revised Deliverables**
-
-1. **GitHub Repository** containing:
-   - **Data Preprocessing Code** (loading, cleaning, augmentation).  
-   - **Model Training Script** (autoencoder or contrastive method).  
-   - **Embedding Extraction & Verification** code.  
-   - **Documentation** explaining how to run everything.
-
-2. **Deployed Streamlit App**:
-   - Minimal “upload two images → see match score” demonstration.
-
-3. **Short Presentation / Video**:
-   - Demonstrates the concept of unsupervised feature learning and verification with a threshold.
-
-
-#### STEPS
-1. Download dataset
-2. Save to dataset/palmprint_data
-3. Covert from JPG to png
-   find dataset/palmprint_data -type d -name '[0-9][0-9][0-9]' -exec sh -c 'cd "$0" && mogrify -format png *.JPG' {} \;
-
-https://www.kaggle.com/datasets/saqibshoaibdz/palm-dataset/data
-https://chatgpt.com/c/67915828-2634-800a-b8b2-df6cc94b5248?model=o1
-
-Need to learn about the palm regconition authentication process, how vector layer is extracted
+**Lucy Tran**
+**2025-02-06**
