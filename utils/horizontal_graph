@@ -1,0 +1,113 @@
+digraph {
+	graph [rankdir=LR]
+	"/encoder/encoder.0/Conv" [label=Conv]
+	"/encoder/encoder.2/Relu" [label=Relu]
+	"/encoder/encoder.3/MaxPool" [label=MaxPool]
+	"/encoder/encoder.4/encoder.4.0/conv1/Conv" [label=Conv]
+	"/encoder/encoder.4/encoder.4.0/relu/Relu" [label=Relu]
+	"/encoder/encoder.4/encoder.4.0/conv2/Conv" [label=Conv]
+	"/encoder/encoder.4/encoder.4.0/Add" [label=Add]
+	"/encoder/encoder.4/encoder.4.0/relu_1/Relu" [label=Relu]
+	"/encoder/encoder.4/encoder.4.1/conv1/Conv" [label=Conv]
+	"/encoder/encoder.4/encoder.4.1/relu/Relu" [label=Relu]
+	"/encoder/encoder.4/encoder.4.1/conv2/Conv" [label=Conv]
+	"/encoder/encoder.4/encoder.4.1/Add" [label=Add]
+	"/encoder/encoder.4/encoder.4.1/relu_1/Relu" [label=Relu]
+	"/encoder/encoder.5/encoder.5.0/conv1/Conv" [label=Conv]
+	"/encoder/encoder.5/encoder.5.0/relu/Relu" [label=Relu]
+	"/encoder/encoder.5/encoder.5.0/conv2/Conv" [label=Conv]
+	"/encoder/encoder.5/encoder.5.0/downsample/downsample.0/Conv" [label=Conv]
+	"/encoder/encoder.5/encoder.5.0/Add" [label=Add]
+	"/encoder/encoder.5/encoder.5.0/relu_1/Relu" [label=Relu]
+	"/encoder/encoder.5/encoder.5.1/conv1/Conv" [label=Conv]
+	"/encoder/encoder.5/encoder.5.1/relu/Relu" [label=Relu]
+	"/encoder/encoder.5/encoder.5.1/conv2/Conv" [label=Conv]
+	"/encoder/encoder.5/encoder.5.1/Add" [label=Add]
+	"/encoder/encoder.5/encoder.5.1/relu_1/Relu" [label=Relu]
+	"/encoder/encoder.6/encoder.6.0/conv1/Conv" [label=Conv]
+	"/encoder/encoder.6/encoder.6.0/relu/Relu" [label=Relu]
+	"/encoder/encoder.6/encoder.6.0/conv2/Conv" [label=Conv]
+	"/encoder/encoder.6/encoder.6.0/downsample/downsample.0/Conv" [label=Conv]
+	"/encoder/encoder.6/encoder.6.0/Add" [label=Add]
+	"/encoder/encoder.6/encoder.6.0/relu_1/Relu" [label=Relu]
+	"/encoder/encoder.6/encoder.6.1/conv1/Conv" [label=Conv]
+	"/encoder/encoder.6/encoder.6.1/relu/Relu" [label=Relu]
+	"/encoder/encoder.6/encoder.6.1/conv2/Conv" [label=Conv]
+	"/encoder/encoder.6/encoder.6.1/Add" [label=Add]
+	"/encoder/encoder.6/encoder.6.1/relu_1/Relu" [label=Relu]
+	"/encoder/encoder.7/encoder.7.0/conv1/Conv" [label=Conv]
+	"/encoder/encoder.7/encoder.7.0/relu/Relu" [label=Relu]
+	"/encoder/encoder.7/encoder.7.0/conv2/Conv" [label=Conv]
+	"/encoder/encoder.7/encoder.7.0/downsample/downsample.0/Conv" [label=Conv]
+	"/encoder/encoder.7/encoder.7.0/Add" [label=Add]
+	"/encoder/encoder.7/encoder.7.0/relu_1/Relu" [label=Relu]
+	"/encoder/encoder.7/encoder.7.1/conv1/Conv" [label=Conv]
+	"/encoder/encoder.7/encoder.7.1/relu/Relu" [label=Relu]
+	"/encoder/encoder.7/encoder.7.1/conv2/Conv" [label=Conv]
+	"/encoder/encoder.7/encoder.7.1/Add" [label=Add]
+	"/encoder/encoder.7/encoder.7.1/relu_1/Relu" [label=Relu]
+	"/encoder/encoder.8/GlobalAveragePool" [label=GlobalAveragePool]
+	"/Flatten" [label=Flatten]
+	"/projection_head/projection_head.0/Gemm" [label=Gemm]
+	"/projection_head/projection_head.1/Relu" [label=Relu]
+	"/projection_head/projection_head.2/Gemm" [label=Gemm]
+	"input.1" -> "/encoder/encoder.0/Conv"
+	"/encoder/encoder.0/Conv" -> "/encoder/encoder.2/Relu"
+	"/encoder/encoder.2/Relu" -> "/encoder/encoder.3/MaxPool"
+	"/encoder/encoder.3/MaxPool" -> "/encoder/encoder.4/encoder.4.0/conv1/Conv"
+	"/encoder/encoder.3/MaxPool" -> "/encoder/encoder.4/encoder.4.0/Add"
+	"/encoder/encoder.4/encoder.4.0/conv1/Conv" -> "/encoder/encoder.4/encoder.4.0/relu/Relu"
+	"/encoder/encoder.4/encoder.4.0/relu/Relu" -> "/encoder/encoder.4/encoder.4.0/conv2/Conv"
+	"/encoder/encoder.4/encoder.4.0/conv2/Conv" -> "/encoder/encoder.4/encoder.4.0/Add"
+	"/encoder/encoder.4/encoder.4.0/Add" -> "/encoder/encoder.4/encoder.4.0/relu_1/Relu"
+	"/encoder/encoder.4/encoder.4.0/relu_1/Relu" -> "/encoder/encoder.4/encoder.4.1/conv1/Conv"
+	"/encoder/encoder.4/encoder.4.0/relu_1/Relu" -> "/encoder/encoder.4/encoder.4.1/Add"
+	"/encoder/encoder.4/encoder.4.1/conv1/Conv" -> "/encoder/encoder.4/encoder.4.1/relu/Relu"
+	"/encoder/encoder.4/encoder.4.1/relu/Relu" -> "/encoder/encoder.4/encoder.4.1/conv2/Conv"
+	"/encoder/encoder.4/encoder.4.1/conv2/Conv" -> "/encoder/encoder.4/encoder.4.1/Add"
+	"/encoder/encoder.4/encoder.4.1/Add" -> "/encoder/encoder.4/encoder.4.1/relu_1/Relu"
+	"/encoder/encoder.4/encoder.4.1/relu_1/Relu" -> "/encoder/encoder.5/encoder.5.0/conv1/Conv"
+	"/encoder/encoder.4/encoder.4.1/relu_1/Relu" -> "/encoder/encoder.5/encoder.5.0/downsample/downsample.0/Conv"
+	"/encoder/encoder.5/encoder.5.0/conv1/Conv" -> "/encoder/encoder.5/encoder.5.0/relu/Relu"
+	"/encoder/encoder.5/encoder.5.0/relu/Relu" -> "/encoder/encoder.5/encoder.5.0/conv2/Conv"
+	"/encoder/encoder.5/encoder.5.0/conv2/Conv" -> "/encoder/encoder.5/encoder.5.0/Add"
+	"/encoder/encoder.5/encoder.5.0/downsample/downsample.0/Conv" -> "/encoder/encoder.5/encoder.5.0/Add"
+	"/encoder/encoder.5/encoder.5.0/Add" -> "/encoder/encoder.5/encoder.5.0/relu_1/Relu"
+	"/encoder/encoder.5/encoder.5.0/relu_1/Relu" -> "/encoder/encoder.5/encoder.5.1/conv1/Conv"
+	"/encoder/encoder.5/encoder.5.0/relu_1/Relu" -> "/encoder/encoder.5/encoder.5.1/Add"
+	"/encoder/encoder.5/encoder.5.1/conv1/Conv" -> "/encoder/encoder.5/encoder.5.1/relu/Relu"
+	"/encoder/encoder.5/encoder.5.1/relu/Relu" -> "/encoder/encoder.5/encoder.5.1/conv2/Conv"
+	"/encoder/encoder.5/encoder.5.1/conv2/Conv" -> "/encoder/encoder.5/encoder.5.1/Add"
+	"/encoder/encoder.5/encoder.5.1/Add" -> "/encoder/encoder.5/encoder.5.1/relu_1/Relu"
+	"/encoder/encoder.5/encoder.5.1/relu_1/Relu" -> "/encoder/encoder.6/encoder.6.0/conv1/Conv"
+	"/encoder/encoder.5/encoder.5.1/relu_1/Relu" -> "/encoder/encoder.6/encoder.6.0/downsample/downsample.0/Conv"
+	"/encoder/encoder.6/encoder.6.0/conv1/Conv" -> "/encoder/encoder.6/encoder.6.0/relu/Relu"
+	"/encoder/encoder.6/encoder.6.0/relu/Relu" -> "/encoder/encoder.6/encoder.6.0/conv2/Conv"
+	"/encoder/encoder.6/encoder.6.0/conv2/Conv" -> "/encoder/encoder.6/encoder.6.0/Add"
+	"/encoder/encoder.6/encoder.6.0/downsample/downsample.0/Conv" -> "/encoder/encoder.6/encoder.6.0/Add"
+	"/encoder/encoder.6/encoder.6.0/Add" -> "/encoder/encoder.6/encoder.6.0/relu_1/Relu"
+	"/encoder/encoder.6/encoder.6.0/relu_1/Relu" -> "/encoder/encoder.6/encoder.6.1/conv1/Conv"
+	"/encoder/encoder.6/encoder.6.0/relu_1/Relu" -> "/encoder/encoder.6/encoder.6.1/Add"
+	"/encoder/encoder.6/encoder.6.1/conv1/Conv" -> "/encoder/encoder.6/encoder.6.1/relu/Relu"
+	"/encoder/encoder.6/encoder.6.1/relu/Relu" -> "/encoder/encoder.6/encoder.6.1/conv2/Conv"
+	"/encoder/encoder.6/encoder.6.1/conv2/Conv" -> "/encoder/encoder.6/encoder.6.1/Add"
+	"/encoder/encoder.6/encoder.6.1/Add" -> "/encoder/encoder.6/encoder.6.1/relu_1/Relu"
+	"/encoder/encoder.6/encoder.6.1/relu_1/Relu" -> "/encoder/encoder.7/encoder.7.0/conv1/Conv"
+	"/encoder/encoder.6/encoder.6.1/relu_1/Relu" -> "/encoder/encoder.7/encoder.7.0/downsample/downsample.0/Conv"
+	"/encoder/encoder.7/encoder.7.0/conv1/Conv" -> "/encoder/encoder.7/encoder.7.0/relu/Relu"
+	"/encoder/encoder.7/encoder.7.0/relu/Relu" -> "/encoder/encoder.7/encoder.7.0/conv2/Conv"
+	"/encoder/encoder.7/encoder.7.0/conv2/Conv" -> "/encoder/encoder.7/encoder.7.0/Add"
+	"/encoder/encoder.7/encoder.7.0/downsample/downsample.0/Conv" -> "/encoder/encoder.7/encoder.7.0/Add"
+	"/encoder/encoder.7/encoder.7.0/Add" -> "/encoder/encoder.7/encoder.7.0/relu_1/Relu"
+	"/encoder/encoder.7/encoder.7.0/relu_1/Relu" -> "/encoder/encoder.7/encoder.7.1/conv1/Conv"
+	"/encoder/encoder.7/encoder.7.0/relu_1/Relu" -> "/encoder/encoder.7/encoder.7.1/Add"
+	"/encoder/encoder.7/encoder.7.1/conv1/Conv" -> "/encoder/encoder.7/encoder.7.1/relu/Relu"
+	"/encoder/encoder.7/encoder.7.1/relu/Relu" -> "/encoder/encoder.7/encoder.7.1/conv2/Conv"
+	"/encoder/encoder.7/encoder.7.1/conv2/Conv" -> "/encoder/encoder.7/encoder.7.1/Add"
+	"/encoder/encoder.7/encoder.7.1/Add" -> "/encoder/encoder.7/encoder.7.1/relu_1/Relu"
+	"/encoder/encoder.7/encoder.7.1/relu_1/Relu" -> "/encoder/encoder.8/GlobalAveragePool"
+	"/encoder/encoder.8/GlobalAveragePool" -> "/Flatten"
+	"/Flatten" -> "/projection_head/projection_head.0/Gemm"
+	"/projection_head/projection_head.0/Gemm" -> "/projection_head/projection_head.1/Relu"
+	"/projection_head/projection_head.1/Relu" -> "/projection_head/projection_head.2/Gemm"
+}
