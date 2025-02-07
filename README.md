@@ -172,6 +172,19 @@ To run this project, navigate to the project directory, follow these steps:
 *   **PIL (Pillow):** Python Imaging Library for image handling (used via Streamlit).
 
 ---
+```text
+@article{wang2024ai,
+  author = {Wang, C. and Wu, X. and Liu, J.},
+  title = {A Review on Recent Advances in AI-Driven Image Processing},
+  journal = {Applied Sciences},
+  volume = {14},
+  number = {1},
+  pages = {153},
+  year = {2024},
+  doi = {10.3390/app14010153},
+  url = {https://www.mdpi.com/2076-3417/14/1/153}
+}
+```
 
-**Lucy Tran**
-**2025-02-06**
+_Lucy Tran_
+_2025-02-06_
