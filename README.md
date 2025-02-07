@@ -105,7 +105,6 @@ This contrastive objective forces the model to learn features that are invariant
   <tr>
     <td>
       <p align="center">
-Model Architecture: <br/><br/>
         <a href="output/model/7.%20palmprint_encoder.onnx.svg">
           <img src="output/model/7.%20palmprint_encoder.onnx.svg" height="500">
         </a>
